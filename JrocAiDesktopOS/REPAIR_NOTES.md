@@ -30,3 +30,5 @@ CI now reports each legacy module's compile result separately to identify any re
 Fixed the legacy desktop HUD's unterminated multiline string literals and added clean database shutdown handling.
 
 Replaced the legacy integration test's imports of nonexistent Quantum and web modules with tests against services present in this repository.
+
+Updated the kernel test to use the implemented token-verification API and added a restart-persistence check.
