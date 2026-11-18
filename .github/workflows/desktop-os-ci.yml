@@ -25,11 +25,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
-      - name: Compile Desktop OS entry points and services
+      - name: Compile kernel and service modules
         run: |
-          python -m py_compile \
-            run_jroc_os.py launch_command_center.py \
-            global-tools/tools_suite.py \
+          python -m py_compile run_jroc_os.py \
             layer-01-kernel/kernel_core.py \
             layer-02-failover-router/router_engine.py \
             layer-03-memory-vault/vault_manager.py \
@@ -37,13 +35,17 @@ jobs:
             layer-05-security-sandbox/security_service.py \
             layer-06-worker-swarms/swarm_orchestrator.py \
             layer-07-jbot-core/jbot_service.py \
-            layer-07-jbot-core/jroc_core_engine.py \
-            layer-07-jbot-core/voice_hud.py \
             layer-08-division-workspaces/workspace_manager.py \
             layer-09-industrial-hud/hud_bridge.py \
-            layer-09-industrial-hud/jroc_desktop_hud.py \
             layer-10-revenue-sync/revenue_service.py \
             layer-11-self-evolution/evolution_service.py \
             layer-12-device-mesh/device_mesh_service.py
+      - name: Compile legacy HUD, launch and utility modules
+        run: |
+          python -m py_compile launch_command_center.py \
+            global-tools/tools_suite.py \
+            layer-07-jbot-core/jroc_core_engine.py \
+            layer-07-jbot-core/voice_hud.py \
+            layer-09-industrial-hud/jroc_desktop_hud.py
       - name: Run tests
         run: python -m pytest
