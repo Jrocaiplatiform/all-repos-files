@@ -22,3 +22,5 @@ This branch is a repair candidate, not a production release.
 - Test on supported Windows hardware with local Ollama and the selected model installed.
 - Complete authenticated Owner identity, policy enforcement, secrets protection, backup/restore, and installer validation.
 - Review the remaining Quantum installers and generated files for external inference references and unsafe defaults.
+
+CI compiles the runtime service modules and legacy HUD/utility modules in separate steps so any remaining syntax blocker can be isolated before merge.
