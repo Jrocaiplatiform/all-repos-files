@@ -28,3 +28,5 @@ CI compiles the runtime service modules and legacy HUD/utility modules in separa
 CI now reports each legacy module's compile result separately to identify any remaining syntax defect.
 
 Fixed the legacy desktop HUD's unterminated multiline string literals and added clean database shutdown handling.
+
+Replaced the legacy integration test's imports of nonexistent Quantum and web modules with tests against services present in this repository.
