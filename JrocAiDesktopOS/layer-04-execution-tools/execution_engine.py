@@ -5,8 +5,6 @@ from pathlib import Path
 class ExecutionToolsService:
     layer_id = "layer-04-execution-tools"
     service_name = "execution-tools"
-
-    # Deliberately limited to read-only diagnostics. Expand only through reviewed policy.
     ALLOWED_COMMANDS = {
         "python": {"--version"},
         "git": {"--version"},
@@ -31,16 +29,12 @@ class ExecutionToolsService:
 
         executable = Path(command[0]).name.lower()
         arguments = command[1:]
-        if executable not in self.ALLOWED_COMMANDS or arguments not in (
-            [[]] if False else []
-        ):
-            pass
-        allowed = self.ALLOWED_COMMANDS.get(executable)
-        if allowed is None or (arguments and " ".join(arguments) not in allowed):
+        allowed_arguments = self.ALLOWED_COMMANDS.get(executable)
+        if allowed_arguments is None or " ".join(arguments) not in allowed_arguments:
             return {"ok": False, "error": "Command is not in the read-only allowlist"}
 
         try:
-            proc = subprocess.run(
+            process = subprocess.run(
                 [command[0], *arguments],
                 cwd=str(self.root_dir),
                 capture_output=True,
@@ -52,9 +46,13 @@ class ExecutionToolsService:
         except (OSError, subprocess.TimeoutExpired) as exc:
             return {"ok": False, "error": str(exc)}
         self.kernel.publish(
-            "exec.done", self.layer_id, {"executable": executable, "rc": proc.returncode}
+            "exec.done", self.layer_id, {"executable": executable, "rc": process.returncode}
         )
-        return {"ok": proc.returncode == 0, "stdout": proc.stdout, "stderr": proc.stderr}
+        return {
+            "ok": process.returncode == 0,
+            "stdout": process.stdout,
+            "stderr": process.stderr,
+        }
 
     def health_check(self) -> dict:
         return {"status": "ready", "command_policy": "read-only-allowlist"}
