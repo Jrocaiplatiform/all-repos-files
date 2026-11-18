@@ -20,7 +20,7 @@ class JrocDesktopHUD(tk.Tk):
     def _build_ui(self):
         top = tk.Frame(self, bg="#11161f", height=42)
         top.pack(fill="x", side="top")
-        tk.Label(top, text="  JROC AI OS v12.0  |  ROUTER: localhost:4000 (250 FREE MODELS)  |  VAULT: ONLINE  |  VOICE: READY", fg="#00f0ff", bg="#11161f", font=("Consolas", 10, "bold")).pack(side="left", pady=10)
+        tk.Label(top, text="  JROC AI OS v12.0  |  INFERENCE: LOCAL OLLAMA  |  VAULT: SQLITE  |  INPUT: KEYBOARD", fg="#00f0ff", bg="#11161f", font=("Consolas", 10, "bold")).pack(side="left", pady=10)
 
         main = tk.Frame(self, bg="#0a0d12")
         main.pack(fill="both", expand=True, padx=12, pady=10)
@@ -30,18 +30,18 @@ class JrocDesktopHUD(tk.Tk):
         tk.Label(left, text="12-LAYER SYSTEM MATRIX", fg="#ffffff", bg="#11161f", font=("Consolas", 11, "bold")).pack(pady=10)
 
         layers = [
-            "L12: Cross-Device Mesh [SYNCED]",
-            "L11: Self-Evolution Loop [ACTIVE]",
-            "L10: Revenue & Store Sync [ARMED]",
-            "L09: Industrial HUD Shell [ONLINE]",
-            "L08: Division Workspaces [4x LOADED]",
-            "L07: J-Bot Voice Core [LISTENING]",
-            "L06: Worker Swarms (4x) [READY]",
-            "L05: Security Sandbox [ENFORCED]",
-            "L04: GUI & USB Execution [ARMED]",
-            "L03: SQLite Memory Vault [ONLINE]",
-            "L02: Zero-Cost Failover [250 POOL]",
-            "L01: Multi-OS Kernel [32GB RAM]"
+            "L12: Device Registry [LOCAL PROTOTYPE]",
+            "L11: Upgrade Records [PROTOTYPE]",
+            "L10: Revenue & Store Sync [LICENSE STUB]",
+            "L09: Industrial HUD Shell [UI LOADED]",
+            "L08: Division Workspaces [3 SAMPLE WORKSPACES]",
+            "L07: J-Bot Intent Core [TEXT INPUT]",
+            "L06: Worker Handlers (2x) [PROTOTYPE]",
+            "L05: Security Sandbox [POLICY PROTOTYPE]",
+            "L04: Execution Tools [RESTRICTED]",
+            "L03: SQLite Memory Vault [LOCAL DATABASE]",
+            "L02: Model Router [LOCAL OLLAMA ONLY]",
+            "L01: Host Kernel [HARDWARE DETECTED AT RUNTIME]"
         ]
         for l in layers:
             tk.Label(left, text=f"  {l}", fg="#8be9fd", bg="#161d29", anchor="w", font=("Consolas", 9)).pack(fill="x", padx=8, pady=3)
@@ -52,7 +52,7 @@ class JrocDesktopHUD(tk.Tk):
 
         self.log = tk.Text(center, bg="#07090d", fg="#e6edf3", font=("Consolas", 10), insertbackground="#00f0ff", relief="flat", padx=12, pady=12)
         self.log.pack(fill="both", expand=True, padx=12, pady=(0, 10))
-        self.log.insert("end", "[SYSTEM] All 12 layers built & verified. Speak or enter a command below.
+        self.log.insert("end", "[SYSTEM] 12-layer prototype loaded. Runtime checks determine service readiness. Enter a text command below.
 
 ")
 
