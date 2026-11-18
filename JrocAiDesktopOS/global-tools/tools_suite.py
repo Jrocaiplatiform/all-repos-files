@@ -1,6 +1,9 @@
-import json, sqlite3, zipfile
+import re
+import sqlite3
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
+
 
 class GlobalToolsSuite:
     def __init__(self, root_dir: Path):
@@ -13,41 +16,66 @@ class GlobalToolsSuite:
 
     def _init_db(self):
         with sqlite3.connect(str(self.db_path)) as conn:
-            conn.execute("CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, status TEXT DEFAULT 'queued');")
-            conn.execute("CREATE TABLE IF NOT EXISTS apps (app_id TEXT PRIMARY KEY, name TEXT NOT NULL, version TEXT NOT NULL);")
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, status TEXT DEFAULT 'queued');"
+            )
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS apps (app_id TEXT PRIMARY KEY, name TEXT NOT NULL, version TEXT NOT NULL);"
+            )
 
     def search_files(self, query: str) -> list:
         q = query.lower().strip()
-        return [str(p.relative_to(self.root_dir)) for p in self.root_dir.rglob("*") if p.is_file() and q in p.name.lower()]
+        if not q:
+            return []
+        excluded = {".git", "__pycache__", "backups"}
+        return [
+            str(path.relative_to(self.root_dir))
+            for path in self.root_dir.rglob("*")
+            if path.is_file()
+            and not excluded.intersection(path.parts)
+            and q in path.name.lower()
+        ]
 
     def add_task(self, title: str) -> int:
+        if not title.strip():
+            raise ValueError("Task title is required")
         with sqlite3.connect(str(self.db_path)) as conn:
-            cur = conn.execute("INSERT INTO tasks (title) VALUES (?);", (title,))
-            return int(cur.lastrowid)
+            cursor = conn.execute("INSERT INTO tasks (title) VALUES (?);", (title.strip(),))
+            return int(cursor.lastrowid)
 
     def list_tasks(self) -> list:
         with sqlite3.connect(str(self.db_path)) as conn:
-            return [{"id": r[0], "title": r[1], "status": r[2]} for r in conn.execute("SELECT id, title, status FROM tasks;").fetchall()]
+            return [
+                {"id": row[0], "title": row[1], "status": row[2]}
+                for row in conn.execute("SELECT id, title, status FROM tasks;").fetchall()
+            ]
 
     def install_app(self, app_id: str, name: str, version: str) -> dict:
         with sqlite3.connect(str(self.db_path)) as conn:
-            conn.execute("INSERT OR REPLACE INTO apps (app_id, name, version) VALUES (?, ?, ?);", (app_id, name, version))
-        return {"app_id": app_id, "status": "installed"}
+            conn.execute(
+                "INSERT OR REPLACE INTO apps (app_id, name, version) VALUES (?, ?, ?);",
+                (app_id, name, version),
+            )
+        return {"app_id": app_id, "status": "registered"}
 
     def verify_databases(self) -> list:
-        out = []
-        for db in self.root_dir.rglob("*.db"):
-            with sqlite3.connect(str(db)) as conn:
-                row = conn.execute("PRAGMA integrity_check;").fetchone()
-                out.append({"db": db.name, "ok": next(iter(row)) == "ok"})
-        return out
+        results = []
+        for database in self.root_dir.rglob("*.db"):
+            if {".git", "__pycache__", "backups"}.intersection(database.parts):
+                continue
+            with sqlite3.connect(str(database)) as conn:
+                result = conn.execute("PRAGMA integrity_check;").fetchone()
+            results.append({"db": str(database.relative_to(self.root_dir)), "ok": result[0] == "ok"})
+        return results
 
     def create_snapshot(self, label: str = "auto") -> Path:
-        stamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S"Z)
-        zip_path = self.backup_dir / f"jroc_{label}_{stamp}.zip"
-        with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-            for ext in ("*.py", "*.json", "*.yaml", "*.db"):
-                for item in self.root_dir.rglob(ext):
-                    if "backups" not in item.parts:
-                        zf.write(item, arcname=str(item.relative_to(self.root_dir)))
-       return zip_path
+        safe_label = re.sub(r"[^A-Za-z0-9_-]", "_", label).strip("_") or "auto"
+        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        archive_path = self.backup_dir / f"jroc_{safe_label}_{timestamp}.zip"
+        excluded = {".git", "__pycache__", "backups"}
+        with zipfile.ZipFile(archive_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for pattern in ("*.py", "*.json", "*.yaml", "*.db"):
+                for item in self.root_dir.rglob(pattern):
+                    if not excluded.intersection(item.parts):
+                        archive.write(item, arcname=str(item.relative_to(self.root_dir)))
+        return archive_path

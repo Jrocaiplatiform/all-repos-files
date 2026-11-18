@@ -1,18 +1,23 @@
 from pathlib import Path
 
+
 class DivisionWorkspaceService:
     layer_id = "layer-08-division-workspaces"
     service_name = "division-workspaces"
 
     def __init__(self, root_dir: Path, kernel):
-        self.workspaces = {"ws-executive": "chairman", "ws-engineering": "agent", "ws-security": "agent"}
+        self.workspaces = {
+            "ws-executive": "owner",
+            "ws-engineering": "agent",
+            "ws-security": "agent",
+        }
 
     def start(self) -> dict:
-        return {"workspaces": len(self.workspaces))}
+        return {"workspaces": len(self.workspaces)}
 
     def can_access(self, ws_id: str, role: str) -> bool:
-        req = self.workspaces.get(ws_id)
-        return bool(req) and (role == "chairman" or role == req)
+        required_role = self.workspaces.get(ws_id)
+        return bool(required_role) and (role == "owner" or role == required_role)
 
     def health_check(self) -> dict:
         return {"workspaces": len(self.workspaces)}
