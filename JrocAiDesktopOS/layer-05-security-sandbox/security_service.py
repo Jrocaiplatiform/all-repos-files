@@ -12,7 +12,7 @@ class SecuritySandboxService:
         self.approvals = {}
 
     def start(self) -> dict:
-        return {"status": "ready"}
+        return {"status": "ready", "approval_mode": "fail-closed"}
 
     def authorize_action(self, role: str, action: str) -> dict:
         if action in self.HIGH_RISK:
@@ -30,23 +30,23 @@ class SecuritySandboxService:
                 "requires_owner_approval": True,
                 "request_id": request_id,
             }
-        allowed = role in {"owner", "system", "kernel"}
-        return {"allowed": allowed, "reason": "role policy"}
+        # Caller-supplied role strings are not authenticated identities.
+        return {
+            "allowed": False,
+            "reason": "Denied until authenticated identity and policy enforcement are integrated",
+        }
 
-    def approve_request(self, request_id: str, approved: bool, approved_by: str) -> dict:
-        if approved_by != "owner":
-            return {"ok": False, "error": "Only the Owner may approve high-risk actions"}
-        request = self.approvals.get(request_id)
-        if request is None or request["status"] != "pending":
-            return {"ok": False, "error": "Approval request not found or already decided"}
-        request["status"] = "approved" if approved else "rejected"
-        request["approved_by"] = approved_by
-        self.kernel.publish("security.approval_decided", self.layer_id, dict(request))
-        return {"ok": True, "status": request["status"]}
+    def approve_request(self, request_id: str, approved: bool, approved_by: str = "") -> dict:
+        # Do not accept a caller-supplied "owner" label as proof of authority.
+        return {
+            "ok": False,
+            "error": "Approval is disabled until verified Owner authentication is integrated",
+        }
 
     def health_check(self) -> dict:
         return {
-            "pending": sum(1 for item in self.approvals.values() if item["status"] == "pending")
+            "pending": sum(1 for item in self.approvals.values() if item["status"] == "pending"),
+            "approval_mode": "fail-closed",
         }
 
     def stop(self) -> dict:
