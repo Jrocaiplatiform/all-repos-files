@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 class WorkerSwarmService:
     layer_id = "layer-06-worker-swarms"
     service_name = "worker-swarms"
@@ -9,22 +10,34 @@ class WorkerSwarmService:
         self.workers = {}
 
     def start(self) -> dict:
-        self.register_worker("worker-diag", "diagnostics", lambda p: {"summary": f"Diagnosed {p.get('target', 'os')}"})
-        self.register_worker("worker-sec", "security", lambda p: {"summary": f"Audited {p.get('scope', 'all')}"})
-        return {"workers": len(self.workers))}
+        self.register_worker(
+            "worker-diag",
+            "diagnostics",
+            lambda payload: {"summary": f"Diagnosed {payload.get('target', 'os')}"},
+        )
+        self.register_worker(
+            "worker-sec",
+            "security",
+            lambda payload: {"summary": f"Audited {payload.get('scope', 'all')}"},
+        )
+        return {"workers": len(self.workers)}
 
-    def register_worker(self, wid: str, specialty: str, fn):
-        self.workers[wid] = {"specialty": specialty, "fn": fn}
+    def register_worker(self, worker_id: str, specialty: str, fn):
+        if not worker_id or not specialty or not callable(fn):
+            raise ValueError("Worker ID, specialty, and callable handler are required")
+        self.workers[worker_id] = {"specialty": specialty, "fn": fn}
 
     def dispatch_task(self, specialty: str, payload: dict) -> dict:
-        matches = [w for w in self.workers.values() if w["specialty"] == specialty]
-        if not matches: return {"ok": False, "error": f"No worker for {specialty}"}
-        chosen = next(iter(matches))
+        matches = [worker for worker in self.workers.values() if worker["specialty"] == specialty]
+        if not matches:
+            return {"ok": False, "error": f"No worker for {specialty}"}
+        worker = matches[0]
+        output = worker["fn"](payload)
         self.kernel.publish("swarm.done", self.layer_id, {"specialty": specialty})
-        return {"ok": True, "output": chosen["fn"](payload)}
+        return {"ok": True, "output": output}
 
     def health_check(self) -> dict:
-        return {"workers": len(self.workers))}
+        return {"workers": len(self.workers)}
 
     def stop(self) -> dict:
         return {"status": "stopped"}
