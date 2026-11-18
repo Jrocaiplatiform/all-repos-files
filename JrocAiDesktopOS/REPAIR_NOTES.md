@@ -24,3 +24,5 @@ This branch is a repair candidate, not a production release.
 - Review the remaining Quantum installers and generated files for external inference references and unsafe defaults.
 
 CI compiles the runtime service modules and legacy HUD/utility modules in separate steps so any remaining syntax blocker can be isolated before merge.
+
+CI now reports each legacy module's compile result separately to identify any remaining syntax defect.
