@@ -1,0 +1,9 @@
+{
+  "os_name": "Jroc Ai Desktop OS",
+  "version": "12.0.0",
+  "kernels": [
+    "Windows 11",
+    "Linux",
+    "FydeOS"
+  ]
+}

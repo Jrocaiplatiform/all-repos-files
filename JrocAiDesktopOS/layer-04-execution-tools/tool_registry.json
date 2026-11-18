@@ -1,0 +1,8 @@
+{
+  "bridges": [
+    "FileExplorer",
+    "GitHubSync",
+    "USB_Repair_Probe"
+  ],
+  "visual_confirm": true
+}

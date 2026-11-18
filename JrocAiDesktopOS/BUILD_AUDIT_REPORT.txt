@@ -1,0 +1,48 @@
+J-ROC AI DESKTOP OS BUILD AUDIT
+Date: 11/17/2026 09:32:39
+Project: C:\J-roc-AI\JrocAiDesktopOS
+
+=== FILE AND FOLDER INVENTORY ===
+
+FullName                                                                    Length LastWriteTime        
+--------                                                                    ------ -------------        
+C:\J-roc-AI\JrocAiDesktopOS\BUILD_AUDIT_REPORT.txt                             134 11/17/2026 9:32:39 AM
+C:\J-roc-AI\JrocAiDesktopOS\layer-01-kernel\boot_profile.json                  132 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-02-failover-router\config.yaml              1045 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-03-memory-vault\jroc_os_vault.db           16384 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-04-execution-tools\tool_registry.json        116 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-05-security-sandbox\guardrail_policy.json     56 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-06-worker-swarms\swarms.json                  90 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-07-jbot-core\jroc_core_engine.py            3719 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-07-jbot-core\voice_hud.py                    618 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-08-division-apps\workspaces.json             149 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-09-industrial-hud\jroc_desktop_hud.py       4505 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-10-revenue-sync\store_bridge.json            109 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-11-self-evolution\optimizer_rules.json        47 11/16/2026 7:54:15 PM
+C:\J-roc-AI\JrocAiDesktopOS\layer-12-device-mesh\mesh_nodes.json                61 11/16/2026 7:54:15 PM
+
+
+
+
+=== PROJECT CONFIGURATION FILES ===
+
+=== TEST FILES ===
+
+=== GIT STATUS ===
+## upgrade/command-center-engines-workers
+ D ../app-icon.png
+ D ../build-all.ps1
+ D ../bump-version.ps1
+?? ../.gitignore
+?? ../.idea/
+?? ../J-ROC-AI-Phone-OS-upgrade-command-center-engines-workers.zip
+?? ../J-ROC-AI-Phone-OS-upgrade-command-center-engines-workers/
+?? ./
+?? ../Launch_And_Register_JrocAi_QuantumSpeed.bat
+?? ../Quatum/
+?? ../platform-tools-latest-windows.zip
+?? ../platform-tools-latest-windows/
+?? ../release_packager.yml
+16464e2 feat(factory): sync J-ROC AI workstation, 12 departments, 57 workers, and SQLite orchestrator
+
+=== AUDIT COMPLETE ===
